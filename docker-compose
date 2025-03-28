@@ -1,0 +1,25 @@
+version: "3"
+services:
+  janus-proxy:
+    image: node:18-alpine
+    container_name: janus-proxy
+    restart: unless-stopped
+    network_mode: "host"
+    volumes:
+      - janus-proxy_data:/app
+    working_dir: /app
+    command: >
+      sh -c '
+      if [ ! -d ".git" ]; then 
+        echo "No repository found. Cloning from GitHub..."; 
+        git clone https://github.com/xtraorange/janus-proxy.git .; 
+      else 
+        echo "Repository found. Pulling latest updates..."; 
+        git pull; 
+      fi &&
+      echo "Installing dependencies..." &&
+      npm install &&
+      echo "Starting Janus Proxy..." &&
+      npm start'
+volumes:
+  janus-proxy_data:
